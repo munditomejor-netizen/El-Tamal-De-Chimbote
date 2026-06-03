@@ -572,15 +572,25 @@
       <div class="icono">🎉</div>
       <h3>¡Pedido confirmado!</h3>
       <p>Ahora envía tu comprobante de pago por WhatsApp</p>
-      <div id="yape-btn-container" style="display:none">
-        <div style="background:rgba(255,255,255,0.2); border-radius:12px; padding:10px; margin-top:14px; margin-bottom:4px;">
-          <div style="font-size:0.85rem; opacity:0.9;">Monto a pagar</div>
-          <div id="yape-monto-display" style="font-size:1.8rem; font-weight:800; letter-spacing:1px;"></div>
+      <div id="yape-btn-container" style="display:none; margin-top:14px;">
+        <div style="background:rgba(255,255,255,0.2); border-radius:14px; padding:14px; text-align:left;">
+          <div style="font-size:0.8rem; opacity:0.85; margin-bottom:4px;">💜 Paga con Yape a:</div>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <div>
+              <div style="font-size:0.78rem; opacity:0.8;">Número</div>
+              <div style="font-size:1.2rem; font-weight:800; letter-spacing:1px;">943 134 135</div>
+            </div>
+            <button onclick="copiarNumero()" style="background:rgba(255,255,255,0.3); border:none; border-radius:8px; color:white; font-family:'Nunito',sans-serif; font-weight:700; font-size:0.8rem; padding:6px 12px; cursor:pointer;" id="btn-copiar-num">Copiar</button>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <div style="font-size:0.78rem; opacity:0.8;">Monto</div>
+              <div id="yape-monto-display" style="font-size:1.4rem; font-weight:800;"></div>
+            </div>
+            <button onclick="copiarMonto()" style="background:rgba(255,255,255,0.3); border:none; border-radius:8px; color:white; font-family:'Nunito',sans-serif; font-weight:700; font-size:0.8rem; padding:6px 12px; cursor:pointer;" id="btn-copiar-monto">Copiar</button>
+          </div>
         </div>
-        <a id="yape-link" href="#" class="btn-yape" onclick="copiarMonto(event)">💜 Copiar monto y abrir Yape</a>
-        <div id="yape-copiado" style="background:rgba(255,255,255,0.25); border-radius:10px; padding:10px; font-size:0.95rem; font-weight:700; margin-top:8px; opacity:0; transition:opacity 0.3s;">
-          💜 Debes pagar <span id="yape-monto-aviso"></span> — abriendo Yape...
-        </div>
+        <a id="yape-link" href="#" class="btn-yape" style="margin-top:10px;">💜 Abrir Yape</a>
       </div>
       <p style="margin-top:12px; font-size:1rem;">
         <a href="https://wa.me/51943134135" target="_blank">📲 Enviar comprobante al 943 134 135</a>
@@ -717,7 +727,7 @@ async function enviarPedido() {
     const data = await res.json();
     if (data.ok) {
       if (pago === 'Yape') {
-        document.getElementById('yape-link').href = `yape://yappers.pe?phoneNumber=943134135`;
+        document.getElementById('yape-link').href = `yape://`;
         document.getElementById('yape-link').dataset.monto = total.toFixed(2);
         document.getElementById('yape-monto-display').textContent = `S/ ${total.toFixed(2)}`;
         document.getElementById('yape-btn-container').style.display = 'block';
@@ -817,15 +827,19 @@ function cambiarTab(tab, el) {
   if (tab === 'pedidos' && sesionActiva) cargarPedidos();
 }
 
-function copiarMonto(e) {
-  e.preventDefault();
-  const link = document.getElementById('yape-link');
-  const monto = link.dataset.monto;
+function copiarNumero() {
+  navigator.clipboard.writeText('943134135').catch(() => {});
+  const btn = document.getElementById('btn-copiar-num');
+  btn.textContent = '✓ Copiado';
+  setTimeout(() => btn.textContent = 'Copiar', 2000);
+}
+
+function copiarMonto() {
+  const monto = document.getElementById('yape-link').dataset.monto;
   navigator.clipboard.writeText(monto).catch(() => {});
-  document.getElementById('yape-monto-aviso').textContent = `S/ ${monto}`;
-  const aviso = document.getElementById('yape-copiado');
-  aviso.style.opacity = '1';
-  setTimeout(() => { window.location.href = link.href; }, 1800);
+  const btn = document.getElementById('btn-copiar-monto');
+  btn.textContent = '✓ Copiado';
+  setTimeout(() => btn.textContent = 'Copiar', 2000);
 }
 
 renderMenu();
