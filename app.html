@@ -448,6 +448,23 @@
     float: right;
   }
   .btn-cerrar-sesion:hover { background: rgba(255,255,255,0.5); }
+
+  .btn-yape {
+    display: block;
+    background: linear-gradient(135deg, #6c1fbd, #9333ea);
+    color: white;
+    border-radius: 14px;
+    padding: 14px 20px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    text-decoration: none;
+    margin-top: 14px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(108,31,189,0.45);
+    transition: transform 0.2s;
+  }
+  .btn-yape:hover { transform: scale(1.02); }
 </style>
 </head>
 <body>
@@ -555,6 +572,9 @@
       <div class="icono">🎉</div>
       <h3>¡Pedido confirmado!</h3>
       <p>Ahora envía tu comprobante de pago por WhatsApp</p>
+      <div id="yape-btn-container" style="display:none">
+        <a id="yape-link" href="#" class="btn-yape">💜 Pagar con Yape</a>
+      </div>
       <p style="margin-top:12px; font-size:1rem;">
         <a href="https://wa.me/51943134135" target="_blank">📲 Enviar comprobante al 943 134 135</a>
       </p>
@@ -689,6 +709,12 @@ async function enviarPedido() {
     });
     const data = await res.json();
     if (data.ok) {
+      if (pago === 'Yape') {
+        document.getElementById('yape-link').href = `yape://yappers.pe?number=943134135&amount=${total.toFixed(2)}`;
+        document.getElementById('yape-btn-container').style.display = 'block';
+      } else {
+        document.getElementById('yape-btn-container').style.display = 'none';
+      }
       carrito = {};
       actualizarCount();
       document.getElementById('carrito-contenido').innerHTML = '';
