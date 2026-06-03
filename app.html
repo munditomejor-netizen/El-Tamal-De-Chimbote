@@ -710,7 +710,7 @@ async function enviarPedido() {
     const data = await res.json();
     if (data.ok) {
       if (pago === 'Yape') {
-        document.getElementById('yape-link').href = `yape://yappers.pe?number=943134135&amount=${total.toFixed(2)}`;
+        document.getElementById('yape-link').href = `yape://yappers.pe?phoneNumber=943134135&amount=${total.toFixed(2)}`;
         document.getElementById('yape-btn-container').style.display = 'block';
       } else {
         document.getElementById('yape-btn-container').style.display = 'none';
