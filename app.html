@@ -573,7 +573,14 @@
       <h3>¡Pedido confirmado!</h3>
       <p>Ahora envía tu comprobante de pago por WhatsApp</p>
       <div id="yape-btn-container" style="display:none">
-        <a id="yape-link" href="#" class="btn-yape">💜 Pagar con Yape</a>
+        <div style="background:rgba(255,255,255,0.2); border-radius:12px; padding:10px; margin-top:14px; margin-bottom:4px;">
+          <div style="font-size:0.85rem; opacity:0.9;">Monto a pagar</div>
+          <div id="yape-monto-display" style="font-size:1.8rem; font-weight:800; letter-spacing:1px;"></div>
+        </div>
+        <a id="yape-link" href="#" class="btn-yape" onclick="copiarMonto(event)">💜 Copiar monto y abrir Yape</a>
+        <div id="yape-copiado" style="background:rgba(255,255,255,0.25); border-radius:10px; padding:10px; font-size:0.95rem; font-weight:700; margin-top:8px; opacity:0; transition:opacity 0.3s;">
+          💜 Debes pagar <span id="yape-monto-aviso"></span> — abriendo Yape...
+        </div>
       </div>
       <p style="margin-top:12px; font-size:1rem;">
         <a href="https://wa.me/51943134135" target="_blank">📲 Enviar comprobante al 943 134 135</a>
@@ -710,8 +717,11 @@ async function enviarPedido() {
     const data = await res.json();
     if (data.ok) {
       if (pago === 'Yape') {
-        document.getElementById('yape-link').href = `yape://yappers.pe?phoneNumber=943134135&amount=${total.toFixed(2)}`;
+        document.getElementById('yape-link').href = `yape://yappers.pe?phoneNumber=943134135`;
+        document.getElementById('yape-link').dataset.monto = total.toFixed(2);
+        document.getElementById('yape-monto-display').textContent = `S/ ${total.toFixed(2)}`;
         document.getElementById('yape-btn-container').style.display = 'block';
+        document.getElementById('yape-copiado').style.opacity = '0';
       } else {
         document.getElementById('yape-btn-container').style.display = 'none';
       }
@@ -805,6 +815,17 @@ function cambiarTab(tab, el) {
   document.getElementById('tab-' + tab).classList.add('activa');
   el.classList.add('active');
   if (tab === 'pedidos' && sesionActiva) cargarPedidos();
+}
+
+function copiarMonto(e) {
+  e.preventDefault();
+  const link = document.getElementById('yape-link');
+  const monto = link.dataset.monto;
+  navigator.clipboard.writeText(monto).catch(() => {});
+  document.getElementById('yape-monto-aviso').textContent = `S/ ${monto}`;
+  const aviso = document.getElementById('yape-copiado');
+  aviso.style.opacity = '1';
+  setTimeout(() => { window.location.href = link.href; }, 1800);
 }
 
 renderMenu();
