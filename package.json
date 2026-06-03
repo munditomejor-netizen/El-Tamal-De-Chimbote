@@ -1,0 +1,9 @@
+{
+  "name": "el-tamal-de-chimbote",
+  "version": "1.0.0",
+  "description": "Sistema de pedidos - El Tamal de Chimbote",
+  "main": "servidor.js",
+  "scripts": {
+    "start": "node servidor.js"
+  }
+}

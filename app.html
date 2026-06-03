@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>El Tamal de Chimbote</title>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --celeste: #29b6d8;
+    --naranja: #f97316;
+    --verde: #84cc16;
+    --amarillo: #fbbf24;
+    --blanco: #ffffff;
+    --oscuro: #1a1a2e;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: linear-gradient(135deg, var(--celeste) 0%, #0ea5e9 50%, var(--verde) 100%);
+    min-height: 100vh;
+  }
+
+  header {
+    background: linear-gradient(90deg, var(--naranja), var(--amarillo), var(--naranja));
+    background-size: 200% auto;
+    animation: shimmer 3s linear infinite;
+    text-align: center;
+    padding: 18px 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  }
+
+  @keyframes shimmer {
+    0% { background-position: 0% center; }
+    100% { background-position: 200% center; }
+  }
+
+  header h1 {
+    font-family: 'Pacifico', cursive;
+    font-size: 2rem;
+    color: #7c2d12;
+    text-shadow: 2px 2px 0 #fbbf24, 3px 3px 0 rgba(0,0,0,0.2);
+    animation: bounce 2s ease infinite;
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+  }
+
+  header p { color: #7c2d12; font-weight: 700; font-size: 0.85rem; margin-top: 2px; }
+
+  .tabs {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    padding: 14px;
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(8px);
+  }
+
+  .tab {
+    padding: 10px 22px;
+    border-radius: 30px;
+    border: none;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    background: rgba(255,255,255,0.3);
+    color: white;
+  }
+
+  .tab.active {
+    background: var(--naranja);
+    color: white;
+    box-shadow: 0 4px 15px rgba(249,115,22,0.5);
+    transform: scale(1.05);
+  }
+
+  .contenido { padding: 16px; max-width: 500px; margin: 0 auto; }
+  .seccion { display: none; }
+  .seccion.activa { display: block; }
+
+  .producto {
+    background: white;
+    border-radius: 20px;
+    padding: 16px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    animation: slideIn 0.4s ease forwards;
+    border-left: 5px solid var(--naranja);
+    transition: transform 0.2s;
+  }
+
+  .producto:hover { transform: translateY(-3px); }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateX(-20px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  .producto-emoji { font-size: 2.5rem; }
+  .producto-img {
+    width: 70px; height: 70px;
+    border-radius: 14px;
+    object-fit: cover;
+    flex-shrink: 0;
+    background: #f3f4f6;
+  }
+  .producto-img-wrap {
+    width: 70px; height: 70px;
+    border-radius: 14px;
+    background: #f3f4f6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.2rem;
+    flex-shrink: 0;
+  }
+  #lista-productos { padding-bottom: 90px; }
+  .producto-info { flex: 1; }
+  .producto-info h3 { font-weight: 800; color: var(--oscuro); font-size: 0.95rem; }
+  .producto-info .precio { font-size: 1.1rem; font-weight: 800; color: var(--naranja); margin-top: 2px; }
+
+  .btn-agregar {
+    background: linear-gradient(135deg, var(--verde), #65a30d);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 38px; height: 38px;
+    font-size: 1.4rem;
+    cursor: pointer;
+    font-weight: 800;
+    transition: all 0.2s;
+    box-shadow: 0 3px 10px rgba(132,204,22,0.4);
+  }
+
+  .btn-agregar:hover { transform: scale(1.15); }
+  .btn-agregar:active { transform: scale(0.95); }
+
+  .carrito-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, var(--naranja), #ea580c);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 14px 20px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 0 6px 25px rgba(249,115,22,0.5);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s;
+    z-index: 100;
+  }
+
+  .carrito-btn:hover { transform: scale(1.05); }
+
+  .carrito-count {
+    background: white;
+    color: var(--naranja);
+    border-radius: 50%;
+    width: 24px; height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 800;
+  }
+
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 200;
+    backdrop-filter: blur(4px);
+  }
+
+  .modal-overlay.abierto { display: flex; align-items: flex-end; }
+
+  .modal {
+    background: white;
+    border-radius: 30px 30px 0 0;
+    padding: 24px;
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+    max-height: 85vh;
+    overflow-y: auto;
+    animation: slideUp 0.3s ease;
+  }
+
+  @keyframes slideUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+
+  .modal h2 {
+    font-family: 'Pacifico', cursive;
+    color: var(--naranja);
+    font-size: 1.4rem;
+    margin-bottom: 16px;
+    text-align: center;
+  }
+
+  .item-carrito {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px dashed #e5e7eb;
+  }
+
+  .item-carrito .nombre { font-weight: 700; font-size: 0.9rem; color: var(--oscuro); }
+  .item-carrito .subtotal { font-weight: 800; color: var(--naranja); }
+
+  .controles { display: flex; align-items: center; gap: 8px; }
+
+  .controles button {
+    background: var(--celeste);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 28px; height: 28px;
+    font-size: 1rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .controles button:hover { background: var(--naranja); }
+  .controles span { font-weight: 800; min-width: 20px; text-align: center; }
+
+  .total-box {
+    background: linear-gradient(135deg, var(--naranja), var(--amarillo));
+    border-radius: 15px;
+    padding: 14px;
+    text-align: center;
+    margin: 16px 0;
+    color: white;
+    font-weight: 800;
+    font-size: 1.3rem;
+  }
+
+  .form-group { margin-bottom: 14px; }
+  .form-group label { display: block; font-weight: 700; color: var(--oscuro); margin-bottom: 6px; font-size: 0.9rem; }
+  .form-group input, .form-group select {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.95rem;
+    transition: border 0.2s;
+    outline: none;
+  }
+  .form-group input:focus, .form-group select:focus { border-color: var(--celeste); }
+
+  /* AVISO WHATSAPP */
+  .aviso-wasap {
+    background: linear-gradient(135deg, #25d366, #128c7e);
+    border-radius: 14px;
+    padding: 13px 16px;
+    color: white;
+    font-weight: 700;
+    font-size: 0.88rem;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .aviso-wasap a { color: white; text-decoration: underline; font-weight: 800; }
+
+  .btn-pedir {
+    width: 100%;
+    background: linear-gradient(135deg, var(--verde), #65a30d);
+    color: white;
+    border: none;
+    border-radius: 15px;
+    padding: 15px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(132,204,22,0.4);
+  }
+
+  .btn-pedir:hover { transform: scale(1.02); }
+
+  .btn-cerrar {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    float: right;
+    color: #9ca3af;
+    transition: color 0.2s;
+  }
+  .btn-cerrar:hover { color: var(--naranja); }
+
+  /* PEDIDOS */
+  .pedido-card {
+    background: white;
+    border-radius: 18px;
+    padding: 16px;
+    margin-bottom: 14px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    border-top: 4px solid var(--celeste);
+  }
+
+  .pedido-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .pedido-id { font-weight: 800; color: var(--celeste); font-size: 0.85rem; }
+  .pedido-fecha { color: #9ca3af; font-size: 0.8rem; }
+
+  .estado-badge { padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 800; }
+  .estado-Pendiente { background: #fef3c7; color: #92400e; }
+  .estado-Preparando { background: #dbeafe; color: #1e40af; }
+  .estado-Listo { background: #d1fae5; color: #065f46; }
+  .estado-Entregado { background: #f3f4f6; color: #374151; }
+
+  .pedido-cliente { font-weight: 700; color: var(--oscuro); margin-bottom: 4px; }
+  .pedido-pago { color: #6b7280; font-size: 0.85rem; margin-bottom: 8px; }
+  .pedido-items { font-size: 0.85rem; color: #374151; margin-bottom: 10px; line-height: 1.6; }
+  .pedido-total { font-weight: 800; color: var(--naranja); font-size: 1rem; }
+
+  .btn-estado {
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: none;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 8px;
+  }
+
+  .btn-preparando { background: #dbeafe; color: #1e40af; }
+  .btn-listo { background: #d1fae5; color: #065f46; }
+  .btn-entregado { background: #f3f4f6; color: #374151; }
+  .btn-eliminar {
+    background: #fee2e2;
+    color: #991b1b;
+    float: right;
+    margin-top: 0;
+  }
+  .btn-eliminar:hover { background: #fca5a5; }
+
+  .success-box {
+    background: linear-gradient(135deg, var(--verde), #65a30d);
+    border-radius: 20px;
+    padding: 24px;
+    text-align: center;
+    color: white;
+    display: none;
+  }
+  .success-box.show { display: block; animation: slideIn 0.4s ease; }
+  .success-box .icono { font-size: 3rem; margin-bottom: 10px; }
+  .success-box h3 { font-size: 1.3rem; font-weight: 800; margin-bottom: 8px; }
+  .success-box p { font-size: 0.9rem; opacity: 0.9; }
+  .success-box a { color: white; font-weight: 800; }
+
+  .carrito-vacio { text-align: center; padding: 30px; color: #9ca3af; font-size: 2rem; }
+
+  .info-card {
+    background: white;
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 14px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    text-align: center;
+  }
+  .info-card .icono { font-size: 2.5rem; margin-bottom: 10px; }
+  .info-card h3 { font-weight: 800; color: var(--oscuro); margin-bottom: 6px; }
+  .info-card p { color: #6b7280; font-size: 0.9rem; }
+  .info-card a { color: var(--naranja); font-weight: 700; text-decoration: none; }
+
+  .sin-pedidos { text-align: center; padding: 40px 20px; color: white; }
+  .sin-pedidos .icono { font-size: 3rem; }
+  .sin-pedidos p { font-size: 1rem; margin-top: 10px; font-weight: 600; }
+
+  /* LOGIN MODERADOR */
+  .login-box {
+    background: white;
+    border-radius: 20px;
+    padding: 30px 24px;
+    text-align: center;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+  }
+  .login-box .icono { font-size: 3rem; margin-bottom: 10px; }
+  .login-box h3 { font-weight: 800; color: var(--oscuro); margin-bottom: 6px; font-size: 1.2rem; }
+  .login-box p { color: #6b7280; font-size: 0.85rem; margin-bottom: 18px; }
+  .login-box input {
+    width: 100%;
+    padding: 14px;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1.2rem;
+    text-align: center;
+    letter-spacing: 6px;
+    outline: none;
+    margin-bottom: 12px;
+    transition: border 0.2s;
+  }
+  .login-box input:focus { border-color: var(--celeste); }
+  .login-box .btn-login {
+    width: 100%;
+    background: linear-gradient(135deg, var(--celeste), #0ea5e9);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 13px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .login-box .btn-login:hover { transform: scale(1.02); }
+  .login-error { color: #ef4444; font-size: 0.85rem; margin-top: 10px; font-weight: 700; display: none; }
+
+  .btn-cerrar-sesion {
+    background: rgba(255,255,255,0.3);
+    border: none;
+    border-radius: 20px;
+    padding: 6px 16px;
+    color: white;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    margin-bottom: 12px;
+    float: right;
+  }
+  .btn-cerrar-sesion:hover { background: rgba(255,255,255,0.5); }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🫔 El Tamal de Chimbote</h1>
+  <p>De Luz Rocío Roque Chauca • 943 134 135</p>
+</header>
+
+<div class="tabs">
+  <button class="tab active" onclick="cambiarTab('menu', this)">🫔 Menú</button>
+  <button class="tab" onclick="cambiarTab('pedidos', this)">📋 Pedidos</button>
+  <button class="tab" onclick="cambiarTab('info', this)">📞 Info</button>
+</div>
+
+<div class="contenido">
+
+  <!-- MENU -->
+  <div class="seccion activa" id="tab-menu">
+    <div id="lista-productos"></div>
+  </div>
+
+  <!-- PEDIDOS CON LOGIN -->
+  <div class="seccion" id="tab-pedidos">
+    <div id="login-moderador" class="login-box">
+      <div class="icono">🔐</div>
+      <h3>Área de Moderador</h3>
+      <p>Solo personal autorizado puede ver los pedidos</p>
+      <input type="password" id="input-clave" placeholder="••••••" maxlength="10" onkeydown="if(event.key==='Enter') verificarClave()">
+      <button class="btn-login" onclick="verificarClave()">Entrar</button>
+      <div class="login-error" id="login-error">❌ Contraseña incorrecta</div>
+    </div>
+    <div id="panel-pedidos" style="display:none">
+      <button class="btn-cerrar-sesion" onclick="cerrarSesion()">🔒 Cerrar sesión</button>
+      <div style="clear:both; margin-bottom:10px"></div>
+      <div id="lista-pedidos"></div>
+    </div>
+  </div>
+
+  <!-- INFO -->
+  <div class="seccion" id="tab-info">
+    <div class="info-card">
+      <div class="icono">🫔</div>
+      <h3>El Tamal de Chimbote</h3>
+      <p>De Luz Rocío Roque Chauca</p>
+    </div>
+    <div class="info-card">
+      <div class="icono">📱</div>
+      <h3>Yape, Plin y Pedidos</h3>
+      <p><a href="tel:943134135">943 134 135</a></p>
+    </div>
+    <div class="info-card">
+      <div class="icono">🏪</div>
+      <h3>Recojo en tienda</h3>
+      <p>Todos los pedidos se recogen en nuestra tienda</p>
+    </div>
+    <div class="info-card">
+      <div class="icono">📍</div>
+      <h3>Ubicación</h3>
+      <p>Chimbote, Ancash, Perú</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- BOTÓN CARRITO -->
+<button class="carrito-btn" onclick="abrirCarrito()">
+  🛒 Mi pedido
+  <span class="carrito-count" id="carrito-count">0</span>
+</button>
+
+<!-- MODAL CARRITO -->
+<div class="modal-overlay" id="modal-overlay" onclick="cerrarSiOverlay(event)">
+  <div class="modal">
+    <button class="btn-cerrar" onclick="cerrarCarrito()">✕</button>
+    <h2>🛒 Mi Pedido</h2>
+
+    <div id="carrito-contenido"></div>
+
+    <div id="form-pedido" style="display:none">
+      <div class="form-group">
+        <label>👤 Tu nombre</label>
+        <input type="text" id="input-nombre" placeholder="¿Cómo te llamas?">
+      </div>
+      <div class="form-group">
+        <label>📱 Tu celular</label>
+        <input type="tel" id="input-celular" placeholder="Ej: 987654321">
+      </div>
+      <div class="form-group">
+        <label>💳 Forma de pago</label>
+        <select id="input-pago">
+          <option>Yape</option>
+          <option>Efectivo</option>
+          <option>Plin</option>
+        </select>
+      </div>
+      <div class="aviso-wasap">
+        <span style="font-size:1.5rem">💬</span>
+        <span>Luego de confirmar tu pedido, envía tu comprobante de pago por WhatsApp al <a href="https://wa.me/51943134135" target="_blank">943 134 135</a></span>
+      </div>
+      <button class="btn-pedir" onclick="enviarPedido()">✅ Confirmar Pedido</button>
+    </div>
+
+    <div class="success-box" id="success-box">
+      <div class="icono">🎉</div>
+      <h3>¡Pedido confirmado!</h3>
+      <p>Ahora envía tu comprobante de pago por WhatsApp</p>
+      <p style="margin-top:12px; font-size:1rem;">
+        <a href="https://wa.me/51943134135" target="_blank">📲 Enviar comprobante al 943 134 135</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+<script>
+const PRODUCTOS = [
+  { id: 1, nombre: 'Pollo en Panca de Choclo',         precio: 3.00, emoji: '🫔', img: 'https://commons.wikimedia.org/wiki/Special:FilePath/Tamal_peruano.jpg' },
+  { id: 2, nombre: 'Pollo en Hoja de Platano',          precio: 3.50, emoji: '🍌', img: 'https://commons.wikimedia.org/wiki/Special:FilePath/Tamales_criollo_y_verde_04072010.jpg' },
+  { id: 3, nombre: 'Chancho en Panca de Choclo',        precio: 3.50, emoji: '🫔', img: 'https://commons.wikimedia.org/wiki/Special:FilePath/Tamal_peruano.jpg' },
+  { id: 4, nombre: 'Chancho en Hoja de Platano',        precio: 4.00, emoji: '🍃', img: 'https://commons.wikimedia.org/wiki/Special:FilePath/Tamales_criollo_y_verde_04072010.jpg' },
+  { id: 5, nombre: 'Humitas de Dulce y de Sal',         precio: 3.50, emoji: '🌽', img: 'https://commons.wikimedia.org/wiki/Special:FilePath/Humitas_en_chala_tipicas_de_Argentina8.JPG' },
+  { id: 6, nombre: 'Esencia de Cafe Chanchamayo 250ml', precio: 7.00, emoji: '☕', img: 'https://commons.wikimedia.org/wiki/Special:FilePath/A_small_cup_of_coffee.JPG' },
+];
+
+const BASE_URL = window.location.origin;
+const CLAVE_MODERADOR = '270710';
+let carrito = {};
+let sesionActiva = false;
+
+function renderMenu() {
+  const lista = document.getElementById('lista-productos');
+  lista.innerHTML = PRODUCTOS.map(p => `
+    <div class="producto">
+      <img class="producto-img" src="${p.img}" alt="${p.nombre}"
+        onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="producto-img-wrap" style="display:none">${p.emoji}</div>
+      <div class="producto-info">
+        <h3>${p.nombre}</h3>
+        <div class="precio">S/ ${p.precio.toFixed(2)}</div>
+      </div>
+      <button class="btn-agregar" onclick="agregar(${p.id}, this)">+</button>
+    </div>
+  `).join('');
+}
+
+function agregar(id, btn) {
+  const prod = PRODUCTOS.find(p => p.id === id);
+  if (!carrito[id]) carrito[id] = { ...prod, cantidad: 0 };
+  carrito[id].cantidad++;
+  actualizarCount();
+  btn.textContent = '✓';
+  setTimeout(() => btn.textContent = '+', 600);
+}
+
+function actualizarCount() {
+  const total = Object.values(carrito).reduce((s, i) => s + i.cantidad, 0);
+  document.getElementById('carrito-count').textContent = total;
+}
+
+function abrirCarrito() {
+  document.getElementById('modal-overlay').classList.add('abierto');
+  document.getElementById('success-box').classList.remove('show');
+  renderCarrito();
+}
+
+function cerrarCarrito() {
+  document.getElementById('modal-overlay').classList.remove('abierto');
+}
+
+function cerrarSiOverlay(e) {
+  if (e.target === document.getElementById('modal-overlay')) cerrarCarrito();
+}
+
+function renderCarrito() {
+  const items = Object.values(carrito).filter(i => i.cantidad > 0);
+  const contenido = document.getElementById('carrito-contenido');
+  const formPedido = document.getElementById('form-pedido');
+
+  if (items.length === 0) {
+    contenido.innerHTML = '<div class="carrito-vacio">🛒<br><small style="font-size:1rem;color:#9ca3af">Tu carrito esta vacio</small></div>';
+    formPedido.style.display = 'none';
+    return;
+  }
+
+  const total = items.reduce((s, i) => s + i.precio * i.cantidad, 0);
+
+  contenido.innerHTML = items.map(i => `
+    <div class="item-carrito">
+      <div>
+        <div class="nombre">${i.emoji} ${i.nombre}</div>
+        <div class="controles">
+          <button onclick="cambiarCantidad(${i.id}, -1)">-</button>
+          <span>${i.cantidad}</span>
+          <button onclick="cambiarCantidad(${i.id}, 1)">+</button>
+        </div>
+      </div>
+      <div class="subtotal">S/ ${(i.precio * i.cantidad).toFixed(2)}</div>
+    </div>
+  `).join('') + `<div class="total-box">💰 Total: S/ ${total.toFixed(2)}</div>`;
+
+  formPedido.style.display = 'block';
+}
+
+function cambiarCantidad(id, delta) {
+  if (carrito[id]) {
+    carrito[id].cantidad = Math.max(0, carrito[id].cantidad + delta);
+    if (carrito[id].cantidad === 0) delete carrito[id];
+  }
+  actualizarCount();
+  renderCarrito();
+}
+
+async function enviarPedido() {
+  const nombre = document.getElementById('input-nombre').value.trim();
+  const celular = document.getElementById('input-celular').value.trim();
+  const pago = document.getElementById('input-pago').value;
+
+  if (!nombre || !celular) {
+    alert('Por favor completa tu nombre y celular 😊');
+    return;
+  }
+
+  const items = Object.values(carrito).filter(i => i.cantidad > 0);
+  const total = items.reduce((s, i) => s + i.precio * i.cantidad, 0);
+
+  const pedido = {
+    cliente: nombre,
+    celular,
+    pago,
+    items: items.map(i => ({ nombre: i.nombre, cantidad: i.cantidad, precio: i.precio })),
+    total
+  };
+
+  try {
+    const res = await fetch(`${BASE_URL}/pedido`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(pedido)
+    });
+    const data = await res.json();
+    if (data.ok) {
+      carrito = {};
+      actualizarCount();
+      document.getElementById('carrito-contenido').innerHTML = '';
+      document.getElementById('form-pedido').style.display = 'none';
+      document.getElementById('success-box').classList.add('show');
+    }
+  } catch (e) {
+    alert('No se pudo conectar al servidor. Asegurate de que esta corriendo.');
+  }
+}
+
+// MODERADOR
+function verificarClave() {
+  const clave = document.getElementById('input-clave').value;
+  const error = document.getElementById('login-error');
+  if (clave === CLAVE_MODERADOR) {
+    sesionActiva = true;
+    document.getElementById('login-moderador').style.display = 'none';
+    document.getElementById('panel-pedidos').style.display = 'block';
+    cargarPedidos();
+    error.style.display = 'none';
+  } else {
+    error.style.display = 'block';
+    document.getElementById('input-clave').value = '';
+  }
+}
+
+function cerrarSesion() {
+  sesionActiva = false;
+  document.getElementById('login-moderador').style.display = 'block';
+  document.getElementById('panel-pedidos').style.display = 'none';
+  document.getElementById('input-clave').value = '';
+}
+
+async function cargarPedidos() {
+  const lista = document.getElementById('lista-pedidos');
+  try {
+    const res = await fetch(`${BASE_URL}/pedidos`);
+    const pedidos = await res.json();
+    if (pedidos.length === 0) {
+      lista.innerHTML = '<div class="sin-pedidos"><div class="icono">📋</div><p>Aun no hay pedidos</p></div>';
+      return;
+    }
+    lista.innerHTML = pedidos.reverse().map(p => `
+      <div class="pedido-card">
+        <div class="pedido-header">
+          <span class="pedido-id">Pedido #${p.id.toString().slice(-4)}</span>
+          <span class="estado-badge estado-${p.estado}">${p.estado}</span>
+        </div>
+        <div class="pedido-cliente">👤 ${p.cliente} — 📱 ${p.celular}</div>
+        <div class="pedido-pago">💳 ${p.pago}</div>
+        <div class="pedido-items">${p.items.map(i => `${i.cantidad}x ${i.nombre}`).join(' • ')}</div>
+        <div class="pedido-total">Total: S/ ${p.total.toFixed(2)}</div>
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px">
+          <div>
+            ${p.estado === 'Pendiente' ? `<button class="btn-estado btn-preparando" onclick="cambiarEstado(${p.id}, 'Preparando')">🔥 Preparando</button>` : ''}
+            ${p.estado === 'Preparando' ? `<button class="btn-estado btn-listo" onclick="cambiarEstado(${p.id}, 'Listo')">✅ Listo</button>` : ''}
+            ${p.estado === 'Listo' ? `<button class="btn-estado btn-entregado" onclick="cambiarEstado(${p.id}, 'Entregado')">🎉 Entregado</button>` : ''}
+          </div>
+          <button class="btn-estado btn-eliminar" onclick="eliminarPedido(${p.id})">✕ Eliminar</button>
+        </div>
+        <div class="pedido-fecha" style="margin-top:6px">${p.fecha}</div>
+      </div>
+    `).join('');
+  } catch(e) {
+    lista.innerHTML = '<div class="sin-pedidos"><div class="icono">⚠️</div><p>Inicia el servidor para ver los pedidos</p></div>';
+  }
+}
+
+async function cambiarEstado(id, estado) {
+  await fetch(`${BASE_URL}/estado/${id}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ estado })
+  });
+  cargarPedidos();
+}
+
+async function eliminarPedido(id) {
+  if (!confirm('¿Eliminar este pedido? Esta acción no se puede deshacer.')) return;
+  await fetch(`${BASE_URL}/pedido/${id}`, { method: 'DELETE' });
+  cargarPedidos();
+}
+
+function cambiarTab(tab, el) {
+  document.querySelectorAll('.seccion').forEach(s => s.classList.remove('activa'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('activa');
+  el.classList.add('active');
+  if (tab === 'pedidos' && sesionActiva) cargarPedidos();
+}
+
+renderMenu();
+</script>
+</body>
+</html>
