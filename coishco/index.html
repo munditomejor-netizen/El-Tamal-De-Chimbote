@@ -111,11 +111,6 @@ h2 { font-family: var(--display); font-weight: 800; font-size: clamp(28px, 7.5vw
   font-weight: 800; font-size: 15px; border: 2px solid var(--c1); border-radius: 999px; padding: 8px 16px; transition: background .2s, color .2s; }
 .mas:hover { background: var(--c1); color: var(--on1); }
 .mas svg { width: 18px; height: 18px; }
-.unete .ficha { padding: 28px 22px; display: grid; gap: 14px; text-align: center; justify-items: center; }
-.unete h2 { font-size: clamp(26px, 6.5vw, 42px); }
-.unete p { margin: 0; max-width: 42ch; color: var(--muted); font-size: 17px; }
-.unete .wa { width: 100%; max-width: 380px; }
-.unete .pronto { font-family: var(--hand); font-size: 24px; color: #e8590c; }
 .rating b { font-size: 26px; font-family: var(--display); font-variant-numeric: tabular-nums; }
 .stars { position: relative; font-size: 22px; letter-spacing: 3px; line-height: 1; color: rgba(29, 42, 51, .15); }
 .stars .fill { position: absolute; inset: 0 auto 0 0; overflow: hidden; white-space: nowrap; color: #ffc93c; }
@@ -319,25 +314,6 @@ RESTAURANTES.forEach((r, i) => {
   dots.appendChild(d);
 });
 
-// ====== ÚNETE A LA GUÍA ======
-// Número de WhatsApp para que otros restaurantes se unan (9 dígitos). Vacío = se muestra "muy pronto".
-const CONTACTO = "";
-const un = document.createElement("section");
-un.className = "resto unete"; un.id = "unete";
-un.dataset.c1 = "#f08a3c"; un.dataset.c2 = "#ffc93c"; un.dataset.grupo = "todos";
-un.style.setProperty("--c1", "#f08a3c"); un.style.setProperty("--c2", "#ffc93c");
-un.innerHTML = `
-  <article class="ficha"><span class="n" hidden></span>
-    <h2>¿Tienes un restaurante en Coishco?</h2>
-    <p>Esta guía está abierta a todos los restaurantes de Coishco. Muy pronto podrás sumar el tuyo.</p>
-    <a class="wa" target="_blank" rel="noopener">${WHATSAPP}<span>Quiero unir mi restaurante</span></a>
-  </article>`;
-const uw = un.querySelector(".wa");
-if (CONTACTO) {
-  uw.href = "https://wa.me/51" + CONTACTO.replace(/\D/g, "") + "?text=" + encodeURIComponent("Hola, tengo un restaurante en Coishco y quiero aparecer en la guía En Coishco se come rico.");
-} else uw.hidden = true;
-main.appendChild(un);
-
 // ====== FILTRO ======
 const secciones = () => [...main.querySelectorAll("section")].filter(s => !s.hidden);
 function numerar() {
@@ -347,8 +323,7 @@ function numerar() {
 }
 document.querySelectorAll(".chips button").forEach(b => b.addEventListener("click", () => {
   document.querySelectorAll(".chips button").forEach(x => x.setAttribute("aria-pressed", x === b));
-  main.querySelectorAll("section.resto:not(.unete)").forEach(s => s.hidden = b.dataset.f !== "todos" && s.dataset.grupo !== b.dataset.f);
-  numerar();
+  main.querySelectorAll("section.resto:not(  numerar();
   const primero = secciones()[1];
   if (primero) primero.scrollIntoView({ behavior: "auto" });
 }));
