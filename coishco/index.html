@@ -323,7 +323,8 @@ function numerar() {
 }
 document.querySelectorAll(".chips button").forEach(b => b.addEventListener("click", () => {
   document.querySelectorAll(".chips button").forEach(x => x.setAttribute("aria-pressed", x === b));
-  main.querySelectorAll("section.resto:not(  numerar();
+  main.querySelectorAll("section.resto").forEach(s => s.hidden = b.dataset.f !== "todos" && s.dataset.grupo !== b.dataset.f);
+  numerar();
   const primero = secciones()[1];
   if (primero) primero.scrollIntoView({ behavior: "auto" });
 }));
